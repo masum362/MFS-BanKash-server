@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import router from './routes/router.js';
+import connection from './db/connection.js';
 
 dotenv.config();
 
@@ -17,7 +18,9 @@ app.use(express.urlencoded({extended:true}));
 app.use('/',router)
 
 
+
 const port = process.env.PORT || 3000;
+connection(process.env.MONGODBURI)
 app.listen(port,()=>{
     console.log(`server  listening on ${port}`);
 });

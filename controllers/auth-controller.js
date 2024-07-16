@@ -26,9 +26,9 @@ const registerUser = async (req, res) => {
 
     const hashedPin = await hashPin(user.pin);
     user.pin = hashedPin;
-    console.log({hashedPin});
+    console.log({ hashedPin });
     const newUser = await userModel(user);
-    console.log({newUser});
+    console.log({ newUser });
     newUser.save();
 
     return res
@@ -42,12 +42,16 @@ const registerUser = async (req, res) => {
 };
 
 const loginUser = async (req, res) => {
+  console.log("entered login");
   try {
     const user = req.body;
+    console.log(user);
 
     const isUser = await userModel.findOne({
-      $or: [{ email: user.detail }, { mobile: user.detail }],
+      $or: [{ email: user.details }, { mobile: user.details }],
     });
+
+    console.log(isUser);
 
     if (!isUser) {
       return res.status(404).json({ message: "Invalid user" });
@@ -59,10 +63,12 @@ const loginUser = async (req, res) => {
       return res.status(404).json({ message: "Invalid user" });
     }
 
+    isUser.pin = undefined;
     const token = jwt.sign({ _id: isUser._id }, process.env.JWT_SECRET_KEY, {
       expiresIn: "1h",
     });
 
+    console.log(isUser);
     return res.status(200).json({
       user: isUser,
       token: token,
@@ -74,5 +80,7 @@ const loginUser = async (req, res) => {
       .json({ message: "something went wrong", error: error.message });
   }
 };
+
+
 
 export { homePage, registerUser, loginUser };

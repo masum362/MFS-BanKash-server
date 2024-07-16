@@ -1,10 +1,8 @@
 import bcryptjs from "bcryptjs";
 
-const hashPin = async (pin, saltNumber) => {
-  bcryptjs.hash(pin, saltNumber, (err, result) => {
-    if (err) return err;
-    return result;
-  });
+const hashPin = (pin, saltNumber) => {
+  console.log({ pin });
+ return bcryptjs.hashSync(pin, saltNumber);
 };
 const compareHash = (original, hashed) => {
   return bcryptjs.compareSync(original, hashed);

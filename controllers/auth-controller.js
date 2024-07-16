@@ -9,8 +9,8 @@ const homePage = (req, res) => {
 
 const registerUser = async (req, res) => {
   try {
-    const { user } = req.body;
-
+    const user = req.body;
+    console.log(user);
     if (!user.name || !user.pin || !user.email || !user.mobile) {
       return res
         .status(404)
@@ -26,7 +26,9 @@ const registerUser = async (req, res) => {
 
     const hashedPin = await hashPin(user.pin);
     user.pin = hashedPin;
+    console.log({hashedPin});
     const newUser = await userModel(user);
+    console.log({newUser});
     newUser.save();
 
     return res
@@ -44,7 +46,7 @@ const loginUser = async (req, res) => {
     const user = req.body;
 
     const isUser = await userModel.findOne({
-      $or: [{ email: user.email }, { mobile: user.mobile }],
+      $or: [{ email: user.detail }, { mobile: user.detail }],
     });
 
     if (!isUser) {
@@ -53,17 +55,19 @@ const loginUser = async (req, res) => {
 
     const isMatch = await compareHash(user.pin, isUser.pin);
 
-    if(!isMatch){
-        return res.status(404).json({ message: "Invalid user" });
+    if (!isMatch) {
+      return res.status(404).json({ message: "Invalid user" });
     }
 
-    const token = jwt.sign({_id:isUser._id},process.env.JWT_SECRET_KEY,{
-        expiresIn:'1h',
-    })
+    const token = jwt.sign({ _id: isUser._id }, process.env.JWT_SECRET_KEY, {
+      expiresIn: "1h",
+    });
 
-    return res.status(200).json({user:isUser, token:token,message:"User logged in successfully"});
-
-
+    return res.status(200).json({
+      user: isUser,
+      token: token,
+      message: "User logged in successfully",
+    });
   } catch (error) {
     return res
       .status(500)
@@ -71,4 +75,4 @@ const loginUser = async (req, res) => {
   }
 };
 
-export { homePage, registerUser };
+export { homePage, registerUser, loginUser };

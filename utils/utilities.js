@@ -6,8 +6,8 @@ const hashPin = async (pin, saltNumber) => {
     return result;
   });
 };
-const compareHash = (pin, saltNumber) => {
-  return bcryptjs.compareSync(pin, saltNumber);
+const compareHash = (original, hashed) => {
+  return bcryptjs.compareSync(original, hashed);
 };
 
 export { hashPin, compareHash };

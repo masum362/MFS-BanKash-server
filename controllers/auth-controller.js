@@ -115,4 +115,34 @@ const getSpecificUser = async (req, res) => {
   }
 };
 
-export { homePage, registerUser, loginUser, getUser,getSpecificUser, getAllUser };
+const approveUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await userModel.findOne({ _id: id });
+    if (user.status === "active") {
+      return res.status(403).json({ message: "user status already activated" });
+    } else {
+      const updatedUser = await userModel.updateOne(
+        { _id: id },
+        { status: "active", balance: user.balance + 20 }
+      );
+      return res
+        .status(200)
+        .json({ user: updatedUser, message: "user updated successfully" });
+    }
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "something went wrong", error: error.message });
+  }
+};
+
+export {
+  homePage,
+  registerUser,
+  loginUser,
+  getUser,
+  getSpecificUser,
+  getAllUser,
+  approveUser,
+};

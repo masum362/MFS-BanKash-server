@@ -103,6 +103,16 @@ const getAllUser = async (req, res) => {
   }
 };
 
+const getSpecificUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await userModel.findOne({ _id: id });
+    return res.status(200).json(user);
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "something went wrong", error: error.message });
+  }
+};
 
-
-export { homePage, registerUser, loginUser, getUser, getAllUser };
+export { homePage, registerUser, loginUser, getUser,getSpecificUser, getAllUser };
